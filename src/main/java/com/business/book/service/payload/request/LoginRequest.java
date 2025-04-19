@@ -1,7 +1,6 @@
-package com.business.book.service.payload;
+package com.business.book.service.payload.request;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @Data

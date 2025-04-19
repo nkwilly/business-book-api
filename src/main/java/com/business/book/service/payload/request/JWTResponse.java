@@ -1,10 +1,8 @@
-package com.business.book.service.payload;
+package com.business.book.service.payload.request;
 
-import com.business.book.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.http.HttpStatusCode;
 
 import java.util.List;
 

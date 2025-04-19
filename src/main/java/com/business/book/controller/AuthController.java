@@ -1,13 +1,11 @@
 package com.business.book.controller;
 
-import com.business.book.entity.Role;
 import com.business.book.entity.User;
 import com.business.book.repository.UserRepository;
 import com.business.book.security.UserDetailsImpl;
-import com.business.book.service.constants.Roles;
-import com.business.book.service.payload.JWTResponse;
-import com.business.book.service.payload.LoginRequest;
-import com.business.book.service.payload.RegisterRequest;
+import com.business.book.service.payload.request.JWTResponse;
+import com.business.book.service.payload.request.LoginRequest;
+import com.business.book.service.payload.request.RegisterRequest;
 import com.business.book.service.utils.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 

@@ -1,6 +1,6 @@
 package com.business.book.entity;
 
-import com.business.book.service.constants.Roles;
+import com.business.book.entity.constants.Roles;
 import lombok.Data;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;

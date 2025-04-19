@@ -1,4 +1,4 @@
-package com.business.book.service.constants;
+package com.business.book.entity.constants;
 
 public enum Roles {
     ROLE_ADMIN,
