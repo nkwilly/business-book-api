@@ -55,4 +55,5 @@ public class Enterprise {
     private int numberOfEmployees;
 
     private UUID businessActorId;
+
 }

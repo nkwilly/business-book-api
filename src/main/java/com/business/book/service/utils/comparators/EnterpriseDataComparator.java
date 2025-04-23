@@ -14,7 +14,7 @@ import java.util.UUID;
 @Service
 public class EnterpriseDataComparator implements Comparable<Enterprise> {
     @Getter @Setter
-    private final Enterprise enterprise;
+    private Enterprise enterprise;
 
     @Autowired
     private EnterpriseDataRepository dataRepository;
