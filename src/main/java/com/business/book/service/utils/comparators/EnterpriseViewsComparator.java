@@ -6,39 +6,42 @@ import com.business.book.repository.EnterpriseDataRepository;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class EnterpriseDataComparator implements Comparable<Enterprise> {
-    @Getter @Setter
+    @Getter
+    @Setter
     private final Enterprise enterprise;
 
-    @Autowired
-    private EnterpriseDataRepository dataRepository;
+    private final EnterpriseDataRepository dataRepository;
 
-    public EnterpriseDataComparator(Enterprise enterprise) {
+    public EnterpriseDataComparator(Enterprise enterprise, EnterpriseDataRepository dataRepository) {
         this.enterprise = enterprise;
+        this.dataRepository = dataRepository;
     }
 
     @Override
     public int compareTo(Enterprise o) {
         EnterpriseData enterpriseData = dataRepository.findById(enterprise.getId()).orElse(null);
         if (enterpriseData == null) {
-            enterpriseData = new EnterpriseData();
-            enterpriseData.setId(UUID.randomUUID());
-            enterpriseData.setEnterpriseId(enterprise.getId());
-            enterpriseData.setViewsNumbers(1L);
+            enterpriseData = EnterpriseData.builder()
+                    .id(UUID.randomUUID())
+                    .enterpriseId(enterprise.getId())
+                    .viewsNumbers(1L)
+                    .build();
             dataRepository.save(enterpriseData);
         }
         EnterpriseData oData = dataRepository.findById(o.getId()).orElse(null);
         if (oData == null) {
-            oData = new EnterpriseData();
-            oData.setId(UUID.randomUUID());
-            oData.setEnterpriseId(o.getId());
-            oData.setViewsNumbers(1L);
+            oData = EnterpriseData.builder()
+                    .id(UUID.randomUUID())
+                    .enterpriseId(o.getId())
+                    .viewsNumbers(1L)
+                    .build();
             dataRepository.save(oData);
         }
         return (int) (enterpriseData.getViewsNumbers() - oData.getViewsNumbers());
