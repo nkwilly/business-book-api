@@ -7,7 +7,7 @@ import com.business.book.service.CommunicationWithOrganizationAPI;
 import com.business.book.service.ResearchService;
 import com.business.book.service.payload.request.PageResponse;
 import com.business.book.service.utils.comparators.CapitalShareComparator;
-import com.business.book.service.utils.comparators.EnterpriseDataComparator;
+import com.business.book.service.utils.comparators.EnterpriseViewsComparator;
 import com.business.book.service.utils.comparators.NumberOfEmployeesComparator;
 import com.business.book.service.utils.comparators.YearFoundedComparator;
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -38,16 +38,21 @@ public class ResearchServiceImpl implements ResearchService {
 
         // Tri selon la visibilité, selon l'implémentation actuelle il y a uniquement le nombre de click qui est pris en jeu. D'autres paramètres seront pris
         // en compte plus tard.
-        enterprises = organisationService.getAllEnterprise()
-                .stream().map(EnterpriseDataComparator::new)
-                .sorted().map(EnterpriseDataComparator::getEnterprise).toList();
+        enterprises = organisationService.getAllEnterprise();
+
+        String str = enterprises.stream().filter(et-> et.getOrganizationId() != null).map(et -> et.getOrganizationId().toString()).collect(Collectors.joining(", "));
+
+        log.info("Enterprise list: {}", str);
+
+        EnterpriseViewsComparator comparator = new EnterpriseViewsComparator(dataRepository, enterprises);
+        enterprises.sort(comparator);
         this.dataRepository = dataRepository;
     }
 
     @Override
     public PageResponse findAll(int page, int size) {
         List<Enterprise> sortedEnterprises = enterprises.stream()
-                .filter(enterprise -> dataRepository.findByEnterpriseId(enterprise.getId()).isPresent()).toList();
+                .filter(enterprise -> dataRepository.findByEnterpriseId(enterprise.getOrganizationId()).isPresent()).toList();
         return this.constructPageResponse(page, size, sortedEnterprises);
     }
 
@@ -116,15 +121,17 @@ public class ResearchServiceImpl implements ResearchService {
         return this.constructPageResponse(page, size, sortedEnterprise);
     }
 
+    /*
     @Override
     public PageResponse findByBusinessDomains(int page, int size, String businessDomain) {
         List<Enterprise> sortedEnterprise = enterprises.stream()
                 .filter(enterprise ->
                         enterprise.getBusinessDomains().stream()
+                                .map(dm -> organisationService.get)
                                 .anyMatch(domain -> domain.getDomainName().name().equals(businessDomain)))
                 .toList();
         return this.constructPageResponse(page, size, sortedEnterprise);
-    }
+    }*/
 
     @Override
     public PageResponse findByNumberOfEmployeesMin(int page, int size, int numberOfEmployeesMin) {
@@ -158,10 +165,9 @@ public class ResearchServiceImpl implements ResearchService {
 
     @Scheduled(fixedRate = 3600000)
     private void refreshEnterprisesValue() {
-        enterprises = organisationService.getAllEnterprise()
-                .stream()
-                .map(EnterpriseDataComparator::new).sorted()
-                .map(EnterpriseDataComparator::getEnterprise).toList();
+        enterprises = organisationService.getAllEnterprise();
+        EnterpriseViewsComparator comparator = new EnterpriseViewsComparator(dataRepository, enterprises);
+        enterprises.sort(comparator);
     }
 
     private PageResponse constructPageResponse(int page, int size, List<Enterprise> sortedEnterprises) {

@@ -14,5 +14,4 @@ public class BusinessBookApplication {
         System.out.println("DB_URL: " + System.getenv("DB_USERNAME"));
         SpringApplication.run(BusinessBookApplication.class, args);
     }
-
 }

@@ -14,11 +14,4 @@ public class WebConfig {
     public Module javaTimeModule() {
         return new JavaTimeModule();
     }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return Jackson2ObjectMapperBuilder.json()
-                .modules(javaTimeModule())
-                .build();
-    }
 }

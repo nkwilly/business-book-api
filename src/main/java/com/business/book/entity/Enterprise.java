@@ -2,17 +2,20 @@ package com.business.book.entity;
 
 import com.business.book.entity.constants.Type;
 import com.business.book.entity.constants.Status;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Data @ToString @EqualsAndHashCode
+@Builder
 public class Enterprise {
-    private UUID id;
+    private UUID organizationId;
 
     private String longName;
 
@@ -46,7 +49,7 @@ public class Enterprise {
 
     private Status status;
 
-    private List<Domain> businessDomains;
+    private List<UUID> businessDomains;
 
     private String orgContact;
 
@@ -55,4 +58,14 @@ public class Enterprise {
     private int numberOfEmployees;
 
     private UUID businessActorId;
+
+    private LocalDateTime createAt;
+
+    private LocalDateTime updateAt;
+
+    private LocalDateTime deleteAt;
+
+    private UUID createBy;
+
+    private UUID updateBy;
 }

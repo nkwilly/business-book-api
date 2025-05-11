@@ -21,7 +21,7 @@ public interface ResearchService {
 
     PageResponse findByYearFoundedMax(int page, int size, int yearFoundedMax);
 
-    PageResponse findByBusinessDomains(int page, int size, String businessDomain);
+    //PageResponse findByBusinessDomains(int page, int size, String businessDomain);
 
     PageResponse findByNumberOfEmployeesMin(int page, int size, int numberOfEmployeesMin);
 

@@ -7,7 +7,6 @@ import com.business.book.repository.TokenRepository;
 import com.business.book.repository.UserRepository;
 import com.business.book.service.CommunicationWithOrganizationAPI;
 import com.business.book.entity.Token;
-import com.business.book.service.payload.dto.TokenDTO;
 import com.business.book.service.payload.request.LoginRequest;
 import com.business.book.service.payload.request.RegisterRequest;
 import com.business.book.service.utils.SecurityUtils;
@@ -15,12 +14,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.awt.print.Pageable;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -83,10 +80,10 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
     @Override
     public Enterprise createEnterprise(Enterprise enterprise) {
         String url = baseUrl + "/organizations";
-        Token token = this.findCurrentToken();
+        //Token token = this.findCurrentToken();
         return webClient.post()
                 .uri(url)
-                .header("Authorization", "Bearer " + token.getToken())
+                //.header("Authorization", "Bearer " + token.getToken())
                 .bodyValue(enterprise)
                 .retrieve()
                 .bodyToMono(Enterprise.class)
@@ -95,7 +92,7 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
 
     @Override
     public Enterprise updateEnterprise(Enterprise enterprise) {
-        String url = baseUrl + "/organizations/" + enterprise.getId();
+        String url = baseUrl + "/organizations/" + enterprise.getOrganizationId();
         Token token = this.findCurrentToken();
         return webClient.put()
                 .uri(url)
@@ -108,7 +105,7 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
 
     @Override
     public boolean deleteEnterprise(Enterprise enterprise) {
-        String url = baseUrl + "/organizations/" + enterprise.getId();
+        String url = baseUrl + "/organizations/" + enterprise.getOrganizationId();
         Token token = this.findCurrentToken();
         return Boolean.TRUE.equals(webClient.delete()
                 .uri(url)
@@ -135,10 +132,10 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
     @Override
     public List<Enterprise> getAllEnterprise() {
         String url = baseUrl + "/organizations";
-        Token token = this.findCurrentToken();
+        //Token token = this.findCurrentToken();
         return webClient.get()
                 .uri(url)
-                .header("Authorization", "Bearer " + token.getToken())
+                //.header("Authorization", "Bearer " + token.getToken())
                 .retrieve()
                 .bodyToFlux(Enterprise.class)
                 .collectList()
