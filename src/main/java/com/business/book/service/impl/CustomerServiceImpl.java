@@ -1,6 +1,7 @@
 package com.business.book.service.impl;
 
 import com.business.book.entity.Customer;
+import com.business.book.entity.Enterprise;
 import com.business.book.repository.CustomerRepository;
 import com.business.book.service.CommunicationWithOrganizationAPI;
 import com.business.book.service.CustomerService;
@@ -66,19 +67,31 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void createEnterprise(UUID customerId) {
-        // Appel à l'API externe pour créer une entreprise (à implémenter selon les besoins)
-        throw new UnsupportedOperationException("Gestion des entreprises déléguée à l'API externe.");
+
+        Enterprise enterprise = new Enterprise();
+        enterprise.setBusinessActorId(customerId);
+
+        organizationAPI.createEnterprise(enterprise);
     }
 
     @Override
     public void deleteEnterprise(UUID customerId) {
-        // Appel à l'API externe pour supprimer les entreprises (à implémenter selon les besoins)
-        throw new UnsupportedOperationException("Gestion des entreprises déléguée à l'API externe.");
+        // Récupérer toutes les entreprises du client et les supprimer une à une
+        List<Enterprise> enterprises = organizationAPI.getAllEnterprise();
+        for (Enterprise enterprise : enterprises) {
+            if (enterprise.getBusinessActorId().equals(customerId)) {
+                organizationAPI.deleteEnterprise(enterprise);
+            }
+        }
     }
 
     public void deleteEnterprise(UUID customerId, UUID enterpriseId) {
-        // Appel à l'API externe pour supprimer l'entreprise (à implémenter selon les besoins)
-        throw new UnsupportedOperationException("Gestion des entreprises déléguée à l'API externe.");
+        Enterprise enterprise = organizationAPI.getEnterpriseById(enterpriseId);
+        if (enterprise != null && enterprise.getBusinessActorId().equals(customerId)) {
+            organizationAPI.deleteEnterprise(enterprise);
+        } else {
+            throw new SecurityException("Le client n'est pas propriétaire de cette entreprise.");
+        }
     }
 
     @Override
