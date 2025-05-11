@@ -1,10 +1,8 @@
 package com.business.book.service.impl;
 
 import com.business.book.entity.Customer;
-import com.business.book.entity.Enterprise;
-import com.business.book.entity.constants.Status;
 import com.business.book.repository.CustomerRepository;
-import com.business.book.repository.EnterpriseRepository;
+import com.business.book.service.CommunicationWithOrganizationAPI;
 import com.business.book.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,14 +18,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EnterpriseRepository enterpriseRepository;
+    private final CommunicationWithOrganizationAPI organizationAPI;
 
     @Autowired
     public CustomerServiceImpl(CustomerRepository customerRepository, PasswordEncoder passwordEncoder,
-            EnterpriseRepository enterpriseRepository) {
+            CommunicationWithOrganizationAPI organizationAPI) {
         this.customerRepository = customerRepository;
         this.passwordEncoder = passwordEncoder;
-        this.enterpriseRepository = enterpriseRepository;
+        this.organizationAPI = organizationAPI;
     }
 
     @Override
@@ -68,37 +66,19 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void createEnterprise(UUID customerId) {
-        Optional<Customer> customerOpt = customerRepository.findById(customerId);
-        if (customerOpt.isPresent()) {
-            Enterprise enterprise = new Enterprise();
-            enterprise.setId(UUID.randomUUID());
-            enterprise.setBusinessActorId(customerId);
-            enterprise.setActive(true); // ou à ajuster
-            enterprise.setRegistrationDate(new Date());
-            enterprise.setStatus(Status.SOCIETE_ANONYME);
-
-            enterpriseRepository.save(enterprise);
-        }
+        // Appel à l'API externe pour créer une entreprise (à implémenter selon les besoins)
+        throw new UnsupportedOperationException("Gestion des entreprises déléguée à l'API externe.");
     }
 
     @Override
     public void deleteEnterprise(UUID customerId) {
-        List<Enterprise> enterprises = enterpriseRepository.findAllByBusinessActorId(customerId);
-        for (Enterprise enterprise : enterprises) {
-            enterpriseRepository.deleteById(enterprise.getId());
-        }
+        // Appel à l'API externe pour supprimer les entreprises (à implémenter selon les besoins)
+        throw new UnsupportedOperationException("Gestion des entreprises déléguée à l'API externe.");
     }
 
     public void deleteEnterprise(UUID customerId, UUID enterpriseId) {
-        Optional<Enterprise> enterpriseOpt = enterpriseRepository.findById(enterpriseId);
-        if (enterpriseOpt.isPresent()) {
-            Enterprise enterprise = enterpriseOpt.get();
-            if (enterprise.getBusinessActorId().equals(customerId)) {
-                enterpriseRepository.deleteById(enterpriseId);
-            } else {
-                throw new SecurityException("Le client n'est pas propriétaire de cette entreprise.");
-            }
-        }
+        // Appel à l'API externe pour supprimer l'entreprise (à implémenter selon les besoins)
+        throw new UnsupportedOperationException("Gestion des entreprises déléguée à l'API externe.");
     }
 
     @Override
