@@ -86,10 +86,10 @@ public class ResearchServiceTest {
             enterprise.setCapitalShare(10000.0 + (i * 1000));
             enterprise.setRegistrationDate(new Date());
             enterprise.setCeoName("CEO " + i);
-            enterprise.setYearFounded(new GregorianCalendar(2000 + (i % 20), 0, 1).getTime());
+            //enterprise.setYearFounded(new GregorianCalendar(2000 + (i % 20), 0, 1).getTime());
             enterprise.setKeywords(List.of("innovation", "tech", "service" + i));
             enterprise.setStatus(Status.SOCIETE_ANONYME); // À adapter selon ton enum/class
-            enterprise.setBusinessDomains(List.of(new Domain(UUID.randomUUID(), DomainName.LLC, "desc")));
+            //enterprise.setBusinessDomains(List.of(new Domain(UUID.randomUUID(), DomainName.LLC, "desc")));
             enterprise.setOrgContact("contact" + i + "@entreprise.com");
             enterprise.setEmail("info" + i + "@entreprise.com");
             enterprise.setNumberOfEmployees(10 + i * 5);
@@ -100,7 +100,7 @@ public class ResearchServiceTest {
             EnterpriseData data = new EnterpriseData();
             data.setEnterpriseId(enterprise.getOrganizationId());
             data.setViewsNumbers((long) i);
-            data.setId(UUID.randomUUID());
+            data.setEnterpriseId(UUID.randomUUID());
 
             dataRepository.save(data);
         });
@@ -120,10 +120,10 @@ public class ResearchServiceTest {
         enterprise.setCapitalShare(100000.0);
         enterprise.setRegistrationDate(new Date());
         enterprise.setCeoName("CEO " + 1);
-        enterprise.setYearFounded(new GregorianCalendar(2000 + 1, 1, 1).getTime());
+        //enterprise.setYearFounded(new GregorianCalendar(2000 + 1, 1, 1).getTime());
         enterprise.setBusinessActorId(UUID.randomUUID());
         enterprise.setStatus(Status.SOCIETE_ANONYME);
-        enterprise.setBusinessDomains(List.of(new Domain(UUID.randomUUID(), DomainName.LLC, "desc")));
+        //enterprise.setBusinessDomains(List.of(new Domain(UUID.randomUUID(), DomainName.LLC, "desc")));
         enterprise.setOrgContact("contact" + 1 + "@entreprise.com");
         enterprise.setEmail("info" + 1 + "@entreprise.com");
         enterprise.setNumberOfEmployees(10 + 5);
@@ -141,8 +141,8 @@ public class ResearchServiceTest {
         WebClient.RequestBodyUriSpec webClient1 = Mockito.mock(WebClient.RequestBodyUriSpec.class);
 
 
-        when(organizationService.createEnterprise(Mockito.any(Enterprise.class)))
-                .thenReturn(enterprise);
+        //when(organizationService.createEnterprise(Mockito.any(Enterprise.class)))
+          //      .thenReturn(enterprise);
 
         when(organizationService.register(Mockito.any(RegisterRequest.class)))
                 .thenReturn(mockedToken);

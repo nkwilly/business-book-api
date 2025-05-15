@@ -1,5 +1,6 @@
 package com.business.book.config;
 
+/*
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -29,3 +30,4 @@ public class DotEnvConfig {
         );
     }
 }
+*/

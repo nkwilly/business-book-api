@@ -27,15 +27,18 @@ public class EnterpriseViewsComparator implements Comparator<Enterprise> {
         System.out.println("\n\n\nPreloading views data : " + str);
         //log.error("Enterprise data count: {}", enterprises.size());
         //log.error("Enterprise data: {}", str);
-        List<UUID> ids = enterprises.stream().map(Enterprise::getOrganizationId).toList();
+        List<UUID> ids = enterprises.stream()
+                .map(Enterprise::getOrganizationId)
+                .filter(Objects::nonNull).toList();
         //List<EnterpriseData> allData = dataRepository.findAllByEnterpriseIdIn(ids);
         List<EnterpriseData> allData = new ArrayList<>();
+        System.out.println("\nAll views data : " + ids.size() + "\t" + ids.get(0));
         for (UUID id : ids)
-            if (id != null)
-                allData.add(
-                        dataRepository.findById(id)
-                                .orElse(EnterpriseData.builder().enterpriseId(id).viewsNumbers(0L).build()));
+            allData.add(
+                dataRepository.findByEnterpriseId(id)
+                        .orElse(EnterpriseData.builder().enterpriseId(id).viewsNumbers(0L).build()));
 
+        System.out.println("\n\n\n");
         allData.forEach(data -> viewsCache.put(data.getEnterpriseId(), data.getViewsNumbers()));
 
         enterprises.forEach(e -> {

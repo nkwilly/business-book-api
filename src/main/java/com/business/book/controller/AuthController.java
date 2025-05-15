@@ -3,7 +3,7 @@ package com.business.book.controller;
 import com.business.book.entity.User;
 import com.business.book.repository.UserRepository;
 import com.business.book.security.UserDetailsImpl;
-import com.business.book.service.payload.request.JWTResponse;
+import com.business.book.service.payload.response.JWTResponse;
 import com.business.book.service.payload.request.LoginRequest;
 import com.business.book.service.payload.request.RegisterRequest;
 import com.business.book.service.utils.JwtUtils;

@@ -1,4 +1,4 @@
-package com.business.book.service.payload.request;
+package com.business.book.service.payload.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,5 +1,10 @@
 package com.business.book.entity.constants;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import java.util.Map;
+import java.util.HashMap;
+
 public enum Status {
     ENTREPRISE_INDIVIDUELLE,
     SOCIETE_A_RESPONSABILITE_LIMITEE,
@@ -11,5 +16,28 @@ public enum Status {
     SOCIETE_CIVILE,
     SUCCURSALE,
     SOCIETE_UNIPERSONNELLE_A_RESPONSABILITE_LIMITEE,
-    ACTIVE
+    ACTIVE;
+
+
+    private static final Map<String, Status> FORMAT_MAPPING = new HashMap<>();
+
+    static {
+        for (Status status : values()) {
+            FORMAT_MAPPING.put(status.name(), status);
+        }
+    }
+
+    @JsonCreator
+    public static Status fromValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        String sanitizedValue = value.trim().replace(",", "");
+        return FORMAT_MAPPING.getOrDefault(sanitizedValue, null);
+    }
+
+    @JsonValue
+    public String toValue() {
+        return this.name();
+    }
 }

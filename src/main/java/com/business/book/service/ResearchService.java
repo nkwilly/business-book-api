@@ -1,31 +1,33 @@
 package com.business.book.service;
 
 import com.business.book.entity.constants.Type;
-import com.business.book.service.payload.request.PageResponse;
+import com.business.book.service.payload.response.PageResponse;
 
 
 public interface ResearchService {
-    PageResponse findAll(int page, int size);
+    PageResponse findAll();
+    
+    PageResponse findAll(int size);
 
-    PageResponse findByType(int page, int size, Type type);
+    PageResponse findByType(Type type, int fromIndex, int toIndex);
 
-    PageResponse findByShortName(int page, int size, String name);
+    PageResponse findByShortName(  String name, int fromIndex, int toIndex);
 
-    PageResponse findByLongName(int page, int size, String longName);
+    PageResponse findByLongName(  String longName, int fromIndex, int toIndex);
 
-    PageResponse findByKeyword(int page, int size, String keyword);
+    PageResponse findByKeyword(  String keyword, int fromIndex, int toIndex);
 
-    PageResponse findByCapitalShare(int page, int size, double capitalShare);
+    PageResponse findByCapitalShare(  double capitalShare, int fromIndex, int toIndex);
 
-    PageResponse findByYearFoundedMin(int page, int size, int yearFoundedMin);
+    PageResponse findByYearFoundedMin(  int yearFoundedMin, int fromIndex, int toIndex);
 
-    PageResponse findByYearFoundedMax(int page, int size, int yearFoundedMax);
+    PageResponse findByYearFoundedMax(  int yearFoundedMax, int fromIndex, int toIndex);
 
-    //PageResponse findByBusinessDomains(int page, int size, String businessDomain);
+    //PageResponse findByBusinessDomains(  String businessDomain, int fromIndex, int toIndex);
 
-    PageResponse findByNumberOfEmployeesMin(int page, int size, int numberOfEmployeesMin);
+    PageResponse findByNumberOfEmployeesMin(  int numberOfEmployeesMin, int fromIndex, int toIndex);
 
-    PageResponse findByNumberOfEmployeesMax(int page, int size, int numberOfEmployeesMax);
+    PageResponse findByNumberOfEmployeesMax(  int numberOfEmployeesMax, int fromIndex, int toIndex);
 
-    PageResponse findByBusinessRegistrationNumber(int page, int size, String registrationNumber);
+    PageResponse findByBusinessRegistrationNumber(  String registrationNumber, int fromIndex, int toIndex);
 }

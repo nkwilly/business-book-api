@@ -4,40 +4,34 @@ import com.business.book.entity.Enterprise;
 import com.business.book.entity.EnterpriseData;
 import com.business.book.repository.EnterpriseDataRepository;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-@Service
 public class EnterpriseDataComparator implements Comparable<Enterprise> {
-    @Getter @Setter
-    private Enterprise enterprise;
+    @Getter
+    private final Enterprise enterprise;
 
-    @Autowired
-    private EnterpriseDataRepository dataRepository;
+    private final EnterpriseDataRepository dataRepository;
 
-    public EnterpriseDataComparator(Enterprise enterprise) {
+    public EnterpriseDataComparator(Enterprise enterprise, EnterpriseDataRepository dataRepository) {
         this.enterprise = enterprise;
+        this.dataRepository = dataRepository;
     }
 
     @Override
     public int compareTo(Enterprise o) {
-        EnterpriseData enterpriseData = dataRepository.findById(enterprise.getId()).orElse(null);
+        EnterpriseData enterpriseData = dataRepository.findById(enterprise.getOrganizationId()).orElse(null);
         if (enterpriseData == null) {
-            enterpriseData = new EnterpriseData();
-            enterpriseData.setId(UUID.randomUUID());
-            enterpriseData.setEnterpriseId(enterprise.getId());
+            enterpriseData.setEnterpriseId(UUID.randomUUID());
+            enterpriseData.setEnterpriseId(enterprise.getOrganizationId());
             enterpriseData.setViewsNumbers(1L);
             dataRepository.save(enterpriseData);
         }
-        EnterpriseData oData = dataRepository.findById(o.getId()).orElse(null);
+        EnterpriseData oData = dataRepository.findById(o.getOrganizationId()).orElse(null);
         if (oData == null) {
             oData = new EnterpriseData();
-            oData.setId(UUID.randomUUID());
-            oData.setEnterpriseId(o.getId());
+            oData.setEnterpriseId(UUID.randomUUID());
+            oData.setEnterpriseId(o.getOrganizationId());
             oData.setViewsNumbers(1L);
             dataRepository.save(oData);
         }

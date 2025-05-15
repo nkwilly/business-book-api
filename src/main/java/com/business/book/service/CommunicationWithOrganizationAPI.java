@@ -2,6 +2,7 @@ package com.business.book.service;
 
 import com.business.book.entity.Enterprise;
 import com.business.book.entity.Token;
+import com.business.book.service.payload.request.CreateEnterpriseRequest;
 import com.business.book.service.payload.request.LoginRequest;
 import com.business.book.service.payload.request.RegisterRequest;
 
@@ -13,7 +14,7 @@ public interface CommunicationWithOrganizationAPI {
 
     Token register(RegisterRequest registerRequest);
 
-    Enterprise createEnterprise(Enterprise enterprise);
+    Enterprise createEnterprise(CreateEnterpriseRequest enterprise);
 
     Enterprise updateEnterprise(Enterprise enterprise);
 

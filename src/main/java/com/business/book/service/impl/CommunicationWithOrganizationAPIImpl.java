@@ -7,6 +7,7 @@ import com.business.book.repository.TokenRepository;
 import com.business.book.repository.UserRepository;
 import com.business.book.service.CommunicationWithOrganizationAPI;
 import com.business.book.entity.Token;
+import com.business.book.service.payload.request.CreateEnterpriseRequest;
 import com.business.book.service.payload.request.LoginRequest;
 import com.business.book.service.payload.request.RegisterRequest;
 import com.business.book.service.utils.SecurityUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -78,10 +80,28 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
     }
 
     @Override
-    public Enterprise createEnterprise(Enterprise enterprise) {
+    public Enterprise createEnterprise(CreateEnterpriseRequest enterprise) {
         String url = baseUrl + "/organizations";
-        //Token token = this.findCurrentToken();
+        ////Token token = this.findCurrentToken();
         return webClient.post()
+                .uri(url)
+                ////.header("Authorization", "Bearer " + token.getToken())
+                .bodyValue(enterprise)
+                .retrieve()
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(),
+                        response -> response.bodyToMono(String.class)
+                                .flatMap(errorBody -> Mono.error(new RuntimeException(
+                                        "HTTP Error: " + response.statusCode() + " - " + errorBody)))
+                )
+                .bodyToMono(Enterprise.class).block();
+    }
+
+    @Override
+    public Enterprise updateEnterprise(Enterprise enterprise) {
+        String url = baseUrl + "/organizations/" + enterprise.getOrganizationId();
+        //Token token = this.findCurrentToken();
+        return webClient.put()
                 .uri(url)
                 //.header("Authorization", "Bearer " + token.getToken())
                 .bodyValue(enterprise)
@@ -91,25 +111,12 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
     }
 
     @Override
-    public Enterprise updateEnterprise(Enterprise enterprise) {
-        String url = baseUrl + "/organizations/" + enterprise.getOrganizationId();
-        Token token = this.findCurrentToken();
-        return webClient.put()
-                .uri(url)
-                .header("Authorization", "Bearer " + token.getToken())
-                .bodyValue(enterprise)
-                .retrieve()
-                .bodyToMono(Enterprise.class)
-                .block();
-    }
-
-    @Override
     public boolean deleteEnterprise(Enterprise enterprise) {
         String url = baseUrl + "/organizations/" + enterprise.getOrganizationId();
-        Token token = this.findCurrentToken();
+        //Token token = this.findCurrentToken();
         return Boolean.TRUE.equals(webClient.delete()
                 .uri(url)
-                .header("Authorization", "Bearer " + token.getToken())
+                //.header("Authorization", "Bearer " + token.getToken())
                 .retrieve()
                 .toBodilessEntity()
                 .map(res -> res.getStatusCode().is2xxSuccessful())
@@ -120,10 +127,10 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
     @Override
     public Enterprise getEnterpriseById(UUID id) {
         String url = baseUrl + "/organizations/" + id;
-        Token token = this.findCurrentToken();
+        //Token token = this.findCurrentToken();
         return webClient.get()
                 .uri(url)
-                .header("Authorization", "Bearer " + token.getToken())
+                //.header("Authorization", "Bearer " + token.getToken())
                 .retrieve()
                 .bodyToMono(Enterprise.class)
                 .block();
@@ -132,10 +139,10 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
     @Override
     public List<Enterprise> getAllEnterprise() {
         String url = baseUrl + "/organizations";
-        //Token token = this.findCurrentToken();
+        ////Token token = this.findCurrentToken();
         return webClient.get()
                 .uri(url)
-                //.header("Authorization", "Bearer " + token.getToken())
+                ////.header("Authorization", "Bearer " + token.getToken())
                 .retrieve()
                 .bodyToFlux(Enterprise.class)
                 .collectList()

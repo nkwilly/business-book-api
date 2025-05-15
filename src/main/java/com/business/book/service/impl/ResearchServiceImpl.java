@@ -5,7 +5,7 @@ import com.business.book.entity.constants.Type;
 import com.business.book.repository.EnterpriseDataRepository;
 import com.business.book.service.CommunicationWithOrganizationAPI;
 import com.business.book.service.ResearchService;
-import com.business.book.service.payload.request.PageResponse;
+import com.business.book.service.payload.response.PageResponse;
 import com.business.book.service.utils.comparators.CapitalShareComparator;
 import com.business.book.service.utils.comparators.EnterpriseViewsComparator;
 import com.business.book.service.utils.comparators.NumberOfEmployeesComparator;
@@ -16,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,101 +51,103 @@ public class ResearchServiceImpl implements ResearchService {
     }
 
     @Override
-    public PageResponse findAll(int page, int size) {
-        List<Enterprise> sortedEnterprises = enterprises.stream()
-                .filter(enterprise -> dataRepository.findByEnterpriseId(enterprise.getOrganizationId()).isPresent()).toList();
-        return this.constructPageResponse(page, size, sortedEnterprises);
+    public PageResponse findAll(int size) {
+        return this.constructPageResponse(enterprises, 0, size);
+    }
+    
+    @Override
+    public PageResponse findAll() {
+        return this.constructPageResponse(enterprises, 0, enterprises.size());
     }
 
     @Override
-    public PageResponse findByType(int page, int size, Type type) {
+    public PageResponse findByType(Type type, int fromIndex, int toIndex) {
         List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> enterprise.getType().equals(type)).toList();
-        return this.constructPageResponse(page, size, sortedEnterprises);
+        return this.constructPageResponse(sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByShortName(int page, int size, String shortName) {
+    public PageResponse findByShortName(  String shortName, int fromIndex, int toIndex) {
         LevenshteinDistance distance = new LevenshteinDistance();
         List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> {
                     int result = distance.apply(shortName, enterprise.getShortName());
                     return shortName.length() * 0.4 >= result;
                 }).toList();
-        return this.constructPageResponse(page, size, sortedEnterprises);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByLongName(int page, int size, String longName) {
+    public PageResponse findByLongName(  String longName, int fromIndex, int toIndex) {
         LevenshteinDistance distance = new LevenshteinDistance();
         List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> {
                     int result = distance.apply(longName, enterprise.getLongName());
                     return longName.length() * 0.4 >= result;
                 }).toList();
-        return this.constructPageResponse(page, size, sortedEnterprises);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByKeyword(int page, int size, String keyword) {
-        List<Enterprise> sortedEnterprise = enterprises.stream()
+    public PageResponse findByKeyword(  String keyword, int fromIndex, int toIndex) {
+        List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> enterprise.getKeywords().contains(keyword)).toList();
-        return this.constructPageResponse(page, size, sortedEnterprise);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByCapitalShare(int page, int size, double capitalShare) {
-        List<Enterprise> sortedEnterprise = enterprises.stream()
+    public PageResponse findByCapitalShare(  double capitalShare, int fromIndex, int toIndex) {
+        List<Enterprise> sortedEnterprises = enterprises.stream()
                 .map(CapitalShareComparator::new).sorted().map(CapitalShareComparator::getEnterprise).toList();
-        return this.constructPageResponse(page, size, sortedEnterprise);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByYearFoundedMin(int page, int size, int yearFoundedMin) {
-        List<Enterprise> sortedEnterprise = enterprises.stream()
+    public PageResponse findByYearFoundedMin(  int yearFoundedMin, int fromIndex, int toIndex) {
+        List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> enterprise.getYearFounded().getYear() >= yearFoundedMin)
-                .map(YearFoundedComparator::new).sorted()
-                .map(YearFoundedComparator::getEnterprise).toList();
-        return this.constructPageResponse(page, size, sortedEnterprise);
+                .sorted(Comparator.comparing(Enterprise::getYearFounded))
+                .toList();
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByYearFoundedMax(int page, int size, int yearFoundedMax) {
-        List<Enterprise> sortedEnterprise = enterprises.stream()
+    public PageResponse findByYearFoundedMax(  int yearFoundedMax, int fromIndex, int toIndex) {
+        List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> enterprise.getYearFounded().getYear() <= yearFoundedMax)
-                .map(YearFoundedComparator::new).sorted()
-                .map(YearFoundedComparator::getEnterprise)
+                .sorted(Comparator.comparing(Enterprise::getYearFounded))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
                     Collections.reverse(list);
                     return list;
                 }));
-        return this.constructPageResponse(page, size, sortedEnterprise);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     /*
     @Override
-    public PageResponse findByBusinessDomains(int page, int size, String businessDomain) {
+    public PageResponse findByBusinessDomains(  String businessDomain, int fromIndex, int toIndex) {
         List<Enterprise> sortedEnterprise = enterprises.stream()
                 .filter(enterprise ->
                         enterprise.getBusinessDomains().stream()
                                 .map(dm -> organisationService.get)
                                 .anyMatch(domain -> domain.getDomainName().name().equals(businessDomain)))
                 .toList();
-        return this.constructPageResponse(page, size, sortedEnterprise);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);;
     }*/
 
     @Override
-    public PageResponse findByNumberOfEmployeesMin(int page, int size, int numberOfEmployeesMin) {
-        List<Enterprise> sortedEnterprise = enterprises.stream()
+    public PageResponse findByNumberOfEmployeesMin(  int numberOfEmployeesMin, int fromIndex, int toIndex) {
+        List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> enterprise.getNumberOfEmployees() >= numberOfEmployeesMin)
                 .map(NumberOfEmployeesComparator::new).sorted()
                 .map(NumberOfEmployeesComparator::getEnterprise).toList();
-        return this.constructPageResponse(page, size, sortedEnterprise);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByNumberOfEmployeesMax(int page, int size, int numberOfEmployeesMax) {
-        List<Enterprise> sortedEnterprise = enterprises.stream()
+    public PageResponse findByNumberOfEmployeesMax(  int numberOfEmployeesMax, int fromIndex, int toIndex) {
+        List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> enterprise.getNumberOfEmployees() <= numberOfEmployeesMax)
                 .map(NumberOfEmployeesComparator::new).sorted()
                 .map(NumberOfEmployeesComparator::getEnterprise)
@@ -152,32 +155,36 @@ public class ResearchServiceImpl implements ResearchService {
                     Collections.reverse(list);
                     return list;
                 }));
-        return this.constructPageResponse(page, size, sortedEnterprise);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
     @Override
-    public PageResponse findByBusinessRegistrationNumber(int page, int size, String registrationNumber) {
-        List<Enterprise> sortedEnterprise = enterprises.stream()
+    public PageResponse findByBusinessRegistrationNumber(  String registrationNumber, int fromIndex, int toIndex) {
+        List<Enterprise> sortedEnterprises = enterprises.stream()
                 .filter(enterprise -> enterprise.getBusinessRegistrationNumber().equals(registrationNumber))
                 .toList();
-        return this.constructPageResponse(page, size, sortedEnterprise);
+        return this.constructPageResponse( sortedEnterprises, fromIndex, toIndex);
     }
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(fixedRate = 3600)
     private void refreshEnterprisesValue() {
         enterprises = organisationService.getAllEnterprise();
         EnterpriseViewsComparator comparator = new EnterpriseViewsComparator(dataRepository, enterprises);
         enterprises.sort(comparator);
     }
 
-    private PageResponse constructPageResponse(int page, int size, List<Enterprise> sortedEnterprises) {
-        PageResponse response = new PageResponse();
-        response.setPage(page);
-        response.setSize(size);
-        response.setTotalResult(sortedEnterprises.size());
-        int fromIndex = (page - 1) * size;
-        int toIndex = fromIndex * size;
-        response.setEnterprises(sortedEnterprises.subList(fromIndex, toIndex));
-        return response;
+    private PageResponse constructPageResponse(List<Enterprise> sortedEnterprises, int fromIndex, int toIndex) {
+        if (fromIndex > toIndex || toIndex < 0 || fromIndex < 0)
+            throw new IllegalArgumentException("fromIndex or toIndex out of bounds");
+        if (toIndex > sortedEnterprises.size()) {
+            return PageResponse.builder()
+                    .enterprises(sortedEnterprises)
+                    .totalResult(sortedEnterprises.size())
+                    .build();
+        }
+        return PageResponse.builder()
+                .enterprises(sortedEnterprises.subList(fromIndex, toIndex))
+                .totalResult(toIndex - fromIndex)
+                .build();
     }
 }
