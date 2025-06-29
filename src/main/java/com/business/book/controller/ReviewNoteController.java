@@ -2,6 +2,7 @@ package com.business.book.controller;
 
 import com.business.book.entity.ReviewNote;
 import com.business.book.service.ReviewNoteService;
+import com.business.book.service.payload.request.CreateReviewNoteRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,11 @@ public class ReviewNoteController {
     
     @PostMapping
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<ReviewNote> createReviewNote(@RequestBody ReviewNote reviewNote) {
+    public ResponseEntity<ReviewNote> createReviewNote(@RequestBody CreateReviewNoteRequest createReviewNoteRequest) {
+        ReviewNote reviewNote = ReviewNote.builder()
+                .organizationId(createReviewNoteRequest.getOrganizationId())
+                .note(createReviewNoteRequest.getNote())
+                .build();
         ReviewNote savedReviewNote = reviewNoteService.save(reviewNote);
         return new ResponseEntity<>(savedReviewNote, HttpStatus.CREATED);
     }
@@ -64,5 +69,4 @@ public class ReviewNoteController {
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    
 }

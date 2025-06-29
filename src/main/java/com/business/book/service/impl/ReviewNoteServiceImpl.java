@@ -22,9 +22,7 @@ public class ReviewNoteServiceImpl implements ReviewNoteService {
 
     @Override
     public ReviewNote save(ReviewNote reviewNote) {
-        if (reviewNote.getId() == null) {
-            reviewNote.setId(UUID.randomUUID());
-        }
+        reviewNote.setId(UUID.randomUUID());
         return reviewNoteRepository.save(reviewNote);
     }
 

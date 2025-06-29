@@ -6,4 +6,5 @@ import org.springframework.data.cassandra.repository.CassandraRepository;
 import java.util.UUID;
 
 public interface RoleRepository extends CassandraRepository<Role, UUID> {
+    Role findByName(String name);
 }

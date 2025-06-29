@@ -168,7 +168,7 @@ public class CommunicationWithOrganizationAPIImpl implements CommunicationWithOr
 
     private Token authentication(JsonNode jsonNode) {
         Token token = new Token();
-        token.setToken(jsonNode.get("token").asText());
+        token.setContent(jsonNode.get("token").asText());
         token.setRoles(jsonNode.get("roles").asText());
         token.setSaveAt(Instant.now());
         Optional<User> currentUser = securityUtils.getCurrentUser();

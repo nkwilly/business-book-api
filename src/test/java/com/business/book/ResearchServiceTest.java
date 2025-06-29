@@ -1,10 +1,8 @@
 package com.business.book;
 
-import com.business.book.entity.Domain;
 import com.business.book.entity.Enterprise;
 import com.business.book.entity.EnterpriseData;
 import com.business.book.entity.Token;
-import com.business.book.entity.constants.DomainName;
 import com.business.book.entity.constants.Status;
 import com.business.book.entity.constants.Type;
 import com.business.book.service.payload.request.*;
@@ -78,7 +76,7 @@ public class ResearchServiceTest {
             enterprise.setLogoUrl("https://example.com/logo" + i + ".png");
             enterprise.setIndividualBusiness(i % 2 == 0);
             enterprise.setDescription("Description de l'entreprise " + i);
-            enterprise.setType(Type.CREDITS); // À adapter selon ton enum/class
+            enterprise.setType(Type.CREDITS.name()); // À adapter selon ton enum/class
             enterprise.setActive(true);
             enterprise.setWebsiteUrl("https://entreprise" + i + ".com");
             enterprise.setBusinessRegistrationNumber("REG" + 1000 + i);
@@ -112,7 +110,7 @@ public class ResearchServiceTest {
         enterprise.setLogoUrl("https://example.com/logo" + 1 + ".png");
         enterprise.setIndividualBusiness(false);
         enterprise.setDescription("Description de l'entreprise ");
-        enterprise.setType(Type.CREDITS);
+        enterprise.setType(Type.CREDITS.name());
         enterprise.setActive(true);
         enterprise.setWebsiteUrl("https://entreprise" + 1 + ".com");
         enterprise.setBusinessRegistrationNumber("REG" + 1000 + 1);
@@ -133,7 +131,7 @@ public class ResearchServiceTest {
 
         Token mockedToken = new Token();
         mockedToken.setId(UUID.randomUUID());
-        mockedToken.setToken(UUID.randomUUID().toString());
+        mockedToken.setContent(UUID.randomUUID().toString());
         mockedToken.setUserId(UUID.randomUUID());
         mockedToken.setRoles("ROLE_ADMIN");
         mockedToken.setSaveAt(Instant.now());

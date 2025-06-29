@@ -13,26 +13,21 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Getter
 public class UserDetailsImpl implements UserDetails {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Getter
-    private UUID id;
+    private final UUID id;
 
-    @Getter
-    private String username;
+    private final String username;
 
-    @Getter
-    private String email;
+    private final String email;
 
-    @Getter
-    private String password;
+    private final String password;
 
-    @Getter
-    private String tel;
+    private final String tel;
 
-    @Getter
     Collection<? extends GrantedAuthority> authorities;
     
     public UserDetailsImpl(UUID id, String username, String email,
@@ -68,21 +63,21 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

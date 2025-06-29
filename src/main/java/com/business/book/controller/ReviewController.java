@@ -1,7 +1,9 @@
 package com.business.book.controller;
 
 import com.business.book.entity.Review;
+import com.business.book.repository.ReviewRepository;
 import com.business.book.service.ReviewService;
+import com.business.book.service.payload.request.CreateReviewRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +18,22 @@ import java.util.UUID;
 public class ReviewController {
     
     private final ReviewService reviewService;
-    
+    private final ReviewRepository reviewRepository;
+
     @Autowired
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService, ReviewRepository reviewRepository) {
         this.reviewService = reviewService;
+        this.reviewRepository = reviewRepository;
     }
     
     @PostMapping
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<Review> createReview(@RequestBody Review review) {
+    public ResponseEntity<Review> createReview(@RequestBody CreateReviewRequest createReviewRequest) {
+        Review review = Review.builder()
+                .id(UUID.randomUUID())
+                .organizationId(createReviewRequest.getOrganizationId())
+                .content(createReviewRequest.getContent())
+                .build();
         Review savedReview = reviewService.save(review);
         return new ResponseEntity<>(savedReview, HttpStatus.CREATED);
     }
@@ -64,5 +73,10 @@ public class ReviewController {
                 })
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    
+
+    @GetMapping("/organization/{organizationId}")
+    public ResponseEntity<List<Review>> getReviewsByOrganizationId(@PathVariable UUID organizationId) {
+        List<Review> reviews = reviewRepository.findByOrganizationId(organizationId);
+        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    }
 }

@@ -76,7 +76,7 @@ public class SecurityWebConfig {
         //configuration.setAllowedOrigins(Arrays.asList());
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedOrigins(List.of("*"));
-        configuration.setAllowCredentials(true);
+        //configuration.setAllowCredentials(true);
         configuration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

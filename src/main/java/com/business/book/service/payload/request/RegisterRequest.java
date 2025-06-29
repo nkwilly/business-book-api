@@ -23,6 +23,5 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank
-    @Pattern(regexp = "^\\+?[0-9]{10,15}$")
     private String tel;
 }

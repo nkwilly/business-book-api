@@ -1,23 +1,25 @@
 package com.business.book.controller;
 
 import com.business.book.entity.Enterprise;
+import com.business.book.repository.EnterpriseDataRepository;
 import com.business.book.service.CommunicationWithOrganizationAPI;
 import com.business.book.service.payload.request.CreateEnterpriseRequest;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/enterprises")
 public class EnterpriseController {
 
     private final CommunicationWithOrganizationAPI communicationAPI;
+    private final EnterpriseDataRepository dataRepository;
 
-    public EnterpriseController(CommunicationWithOrganizationAPI communicationAPI) {
-        this.communicationAPI = communicationAPI;
-    }
 
 
     @PostMapping
@@ -43,6 +45,10 @@ public class EnterpriseController {
         Enterprise enterprise = communicationAPI.getEnterpriseById(id);
         return ResponseEntity.ok(enterprise);
     }
-    
-    // Bonjour le monde Je suis Willy Watcho
+
+    @GetMapping
+    public ResponseEntity<List<Enterprise>> getAllEnterprises() {
+        List<Enterprise> enterprises = communicationAPI.getAllEnterprise();
+        return ResponseEntity.ok(enterprises);
+    }
 }

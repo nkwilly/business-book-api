@@ -9,12 +9,12 @@ import java.util.List;
 @Data
 @ToString
 @AllArgsConstructor
-public class JWTResponse {
-    private String token;
+    public class JWTResponse {
+        private String token;
 
-    private String type = "Bearer";
+        private String type = "Bearer";
 
-    private String username;
+        private String username;
 
-    private List<String> roles;
-}
+        private List<String> roles;
+    }

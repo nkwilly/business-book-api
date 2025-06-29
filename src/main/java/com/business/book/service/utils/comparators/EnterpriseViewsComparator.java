@@ -17,36 +17,37 @@ public class EnterpriseViewsComparator implements Comparator<Enterprise> {
     public EnterpriseViewsComparator(EnterpriseDataRepository dataRepository, List<Enterprise> enterprises) {
         this.dataRepository = dataRepository;
         // Pré-charger toutes les données en une seule requête
-        String str = enterprises.stream().filter(et-> et.getOrganizationId() !=null).map(et -> et.getOrganizationId().toString()).collect(Collectors.joining(" "));
-        preloadViewsData(enterprises, str);
+        String str = enterprises.stream().filter(et -> et.getOrganizationId() != null).map(et -> et.getOrganizationId().toString()).collect(Collectors.joining(" T"));
+        if (enterprises.size() != 0)
+            preloadViewsData(enterprises, str);
     }
 
     private void preloadViewsData(List<Enterprise> enterprises, String str) {
-
         //log.error("Preloading views data : {}", str);
         System.out.println("\n\n\nPreloading views data : " + str);
-        //log.error("Enterprise data count: {}", enterprises.size());
         //log.error("Enterprise data: {}", str);
         List<UUID> ids = enterprises.stream()
                 .map(Enterprise::getOrganizationId)
                 .filter(Objects::nonNull).toList();
         //List<EnterpriseData> allData = dataRepository.findAllByEnterpriseIdIn(ids);
         List<EnterpriseData> allData = new ArrayList<>();
-        System.out.println("\nAll views data : " + ids.size() + "\t" + ids.get(0));
+        if (!ids.isEmpty())
+            System.out.println("\nAll views data : " + ids.size() + "\t" + ids.get(0));
         for (UUID id : ids)
             allData.add(
-                dataRepository.findByEnterpriseId(id)
-                        .orElse(EnterpriseData.builder().enterpriseId(id).viewsNumbers(0L).build()));
+                    dataRepository.findByEnterpriseId(id)
+                            .orElse(EnterpriseData.builder().enterpriseId(id).viewsNumbers(0L).build()));
 
         System.out.println("\n\n\n");
         allData.forEach(data -> viewsCache.put(data.getEnterpriseId(), data.getViewsNumbers()));
 
-        enterprises.forEach(e -> {
-            if (!viewsCache.containsKey(e.getOrganizationId())) {
-                EnterpriseData newData = createNewEnterpriseData(e.getOrganizationId());
-                viewsCache.put(e.getOrganizationId(), newData.getViewsNumbers());
-            }
-        });
+        if (!enterprises.isEmpty())
+            enterprises.forEach(e -> {
+                if (!viewsCache.containsKey(e.getOrganizationId())) {
+                    EnterpriseData newData = createNewEnterpriseData(e.getOrganizationId());
+                    viewsCache.put(e.getOrganizationId(), newData.getViewsNumbers());
+                }
+            });
     }
 
     @Override
@@ -64,6 +65,7 @@ public class EnterpriseViewsComparator implements Comparator<Enterprise> {
                 .enterpriseId(enterpriseId)
                 .viewsNumbers(1L)
                 .build();
+        log.info("Creating new enterprise data for enterprise id: {}", data);
         return dataRepository.save(data);
     }
 }

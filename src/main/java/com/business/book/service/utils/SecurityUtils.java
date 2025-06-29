@@ -51,7 +51,7 @@ public class SecurityUtils {
     }
 
     public Optional<Object> getCurrentPrincipal() {
-        return getCurrentAuthentication().map(elt -> elt.getPrincipal());
+        return getCurrentAuthentication().map(Authentication::getPrincipal);
     }
 
     public boolean isAuthenticated() {
