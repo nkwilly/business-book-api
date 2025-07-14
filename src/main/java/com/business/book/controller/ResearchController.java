@@ -1,10 +1,11 @@
 package com.business.book.controller;
 
+import com.business.book.entity.Enterprise;
 import com.business.book.entity.constants.Type;
 import com.business.book.service.ResearchService;
-import com.business.book.service.payload.response.PageResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 @RestController
 @RequestMapping("/api/research")
@@ -17,91 +18,91 @@ public class ResearchController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<PageResponse> getAllResearch() {
-        return ResponseEntity.ok(researchService.findAll());
+    public Flux<Enterprise> getAllResearch() {
+        return researchService.findAll();
     }
     @GetMapping("/all-size")
-    public ResponseEntity<PageResponse> findAll(@RequestParam int size) {
-        return ResponseEntity.ok(researchService.findAll(size));
+    public Flux<Enterprise> findAll(@RequestParam int size) {
+        return researchService.findAll(size);
     }
 
     @GetMapping("/type")
-    public ResponseEntity<PageResponse> findByType(
+    public Flux<Enterprise> findByType(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam Type type) {
-        return ResponseEntity.ok(researchService.findByType(type, fromIndex, toIndex));
+        return researchService.findByType(type, fromIndex, toIndex);
     }
 
     @GetMapping("/short-name")
-    public ResponseEntity<PageResponse> findByShortName(
+    public Flux<Enterprise> findByShortName(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam String shortName) {
-        return ResponseEntity.ok(researchService.findByShortName(shortName, fromIndex, toIndex));
+        return researchService.findByShortName(shortName, fromIndex, toIndex);
     }
 
     @GetMapping("/long-name")
-    public ResponseEntity<PageResponse> findByLongName(
+    public Flux<Enterprise> findByLongName(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam String longName) {
-        return ResponseEntity.ok(researchService.findByLongName(longName, fromIndex, toIndex));
+        return researchService.findByLongName(longName, fromIndex, toIndex);
     }
 
     @GetMapping("/keyword")
-    public ResponseEntity<PageResponse> findByKeyword(
+    public Flux<Enterprise> findByKeyword(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam String keyword) {
-        return ResponseEntity.ok(researchService.findByKeyword(keyword, fromIndex, toIndex));
+        return researchService.findByKeyword(keyword, fromIndex, toIndex);
     }
 
     @GetMapping("/capital-share")
-    public ResponseEntity<PageResponse> findByCapitalShare(
+    public Flux<Enterprise> findByCapitalShare(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam double capitalShare) {
-        return ResponseEntity.ok(researchService.findByCapitalShare(capitalShare, fromIndex, toIndex));
+        return researchService.findByCapitalShare(capitalShare, fromIndex, toIndex);
     }
 
     @GetMapping("/year-founded-min")
-    public ResponseEntity<PageResponse> findByYearFoundedMin(
+    public Flux<Enterprise> findByYearFoundedMin(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam int yearFoundedMin) {
-        return ResponseEntity.ok(researchService.findByYearFoundedMin(yearFoundedMin, fromIndex, toIndex));
+        return researchService.findByYearFoundedMin(yearFoundedMin, fromIndex, toIndex);
     }
 
     @GetMapping("/year-founded-max")
-    public ResponseEntity<PageResponse> findByYearFoundedMax(
+    public Flux<Enterprise> findByYearFoundedMax(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam int yearFoundedMax) {
-        return ResponseEntity.ok(researchService.findByYearFoundedMax(yearFoundedMax, fromIndex, toIndex));
+        return researchService.findByYearFoundedMax(yearFoundedMax, fromIndex, toIndex);
     }
 
     @GetMapping("/employees-min")
-    public ResponseEntity<PageResponse> findByNumberOfEmployeesMin(
+    public Flux<Enterprise> findByNumberOfEmployeesMin(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam int numberOfEmployeesMin) {
-        return ResponseEntity.ok(researchService.findByNumberOfEmployeesMin(numberOfEmployeesMin, fromIndex, toIndex));
+        return researchService.findByNumberOfEmployeesMin(numberOfEmployeesMin, fromIndex, toIndex);
     }
 
     @GetMapping("/employees-max")
-    public ResponseEntity<PageResponse> findByNumberOfEmployeesMax(
+    public Flux<Enterprise> findByNumberOfEmployeesMax(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam int numberOfEmployeesMax) {
-        return ResponseEntity.ok(researchService.findByNumberOfEmployeesMax(numberOfEmployeesMax, fromIndex, toIndex));
+        return researchService.findByNumberOfEmployeesMax(numberOfEmployeesMax, fromIndex, toIndex);
     }
 
     @GetMapping("/business-registration-number")
-    public ResponseEntity<PageResponse> findByBusinessRegistrationNumber(
+    public Flux<Enterprise> findByBusinessRegistrationNumber(
             @RequestParam int fromIndex,
             @RequestParam int toIndex,
             @RequestParam String registrationNumber) {
-        return ResponseEntity.ok(researchService.findByBusinessRegistrationNumber(registrationNumber, fromIndex, toIndex));
+        return researchService.findByBusinessRegistrationNumber(registrationNumber, fromIndex, toIndex);
     }
 }

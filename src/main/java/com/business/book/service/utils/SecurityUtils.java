@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.security.Principal;
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,52 +28,57 @@ public class SecurityUtils {
     private final RoleRepository roleRepository;
     private UserRepository userRepository;
 
-
-    public Optional<Authentication> getCurrentAuthentication() {
-        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication());
+    /*
+    public Mono<Authentication> getCurrentAuthentication() {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(SecurityContext::getAuthentication);
     }
 
-    public Optional<String> getCurrentUsername() {
-        return getCurrentAuthentication().map(Principal::getName);
+    public Mono<String> getCurrentUsername() {
+        return getCurrentAuthentication()
+                .map(Authentication::getName);
     }
 
-    public Set<GrantedAuthority> getCurrentAuthorities() {
-        Optional<User> optionalUser = getCurrentUser();
-        if (optionalUser.isPresent())
-            return userRoleRepository.findByUserId(optionalUser.get().getId())
-                    .stream().map(UserRole::getRoleId)
-                    .map(roleRepository::findById)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(role -> role.getName().name())
-                    .map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
-        throw new RuntimeException("User has not authorities yet");
-    }
-
-    public Optional<Object> getCurrentPrincipal() {
-        return getCurrentAuthentication().map(Authentication::getPrincipal);
-    }
-
-    public boolean isAuthenticated() {
-        return getCurrentAuthentication().isPresent();
-    }
-
-    public Optional<User> getCurrentUser() {
-        String username = getCurrentUsername().orElse("");
-        return userRepository.findByUsername(username);
-    }
-
-    public boolean isUserOfCurrentUser(String userId) {
+    public Mono<Set<GrantedAuthority>> getCurrentAuthorities() {
         return getCurrentUser()
-                .orElseThrow(() -> new RuntimeException("User not found"))
-                .getId().equals(userId);
+                .flatMapMany(user -> Flux.fromIterable(userRoleRepository.findByUserId(user.getId())))
+                .flatMap(userRole -> userRole.getRoleId() != null ? 
+                        Mono.justOrEmpty(roleRepository.findById(userRole.getRoleId())) : 
+                        Mono.empty())
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collectSet()
+                .switchIfEmpty(Mono.error(new RuntimeException("User has no authorities yet")));
     }
 
-    public boolean isCurrentUserAdmin() {
-        return getCurrentAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","))
-                .contains("ROLE_ADMIN");
+    public Mono<Object> getCurrentPrincipal() {
+        return getCurrentAuthentication()
+                .map(Authentication::getPrincipal);
     }
+
+    public Mono<Boolean> isAuthenticated() {
+        return getCurrentAuthentication()
+                .map(auth -> true)
+                .defaultIfEmpty(false);
+    }
+
+    public Mono<User> getCurrentUser() {
+        return getCurrentUsername()
+                .flatMap(userRepository::findByUsername);
+    }
+
+    public Mono<Boolean> isUserOfCurrentUser(String userId) {
+        return getCurrentUser()
+                .map(user -> user.getId().toString().equals(userId))
+                .defaultIfEmpty(false);
+    }
+
+    public Mono<Boolean> isCurrentUserAdmin() {
+        return getCurrentAuthorities()
+                .map(authorities -> authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .anyMatch(authority -> authority.equals("ROLE_ADMIN")))
+                .defaultIfEmpty(false);
+    }
+
+     */
 }
-

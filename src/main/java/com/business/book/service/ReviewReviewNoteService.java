@@ -1,16 +1,17 @@
 package com.business.book.service;
 
 import com.business.book.entity.ReviewReviewNote;
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.UUID;
 
 public interface ReviewReviewNoteService {
-    ReviewReviewNote save(ReviewReviewNote reviewReviewNote);
-    List<ReviewReviewNote> findAll();
-    Optional<ReviewReviewNote> findById(UUID id);
-    List<ReviewReviewNote> findByReviewId(UUID reviewId);
-    List<ReviewReviewNote> findByReviewNoteId(UUID reviewNoteId);
-    Optional<ReviewReviewNote> findByReviewIdAndReviewNoteId(UUID reviewId, UUID reviewNoteId);
-    void deleteById(UUID id);
+    Mono<ReviewReviewNote> save(ReviewReviewNote reviewReviewNote);
+    Flux<ReviewReviewNote> findAll();
+    Mono<ReviewReviewNote> findById(UUID id);
+    Flux<ReviewReviewNote> findByReviewId(UUID reviewId);
+    Flux<ReviewReviewNote> findByReviewNoteId(UUID reviewNoteId);
+    Mono<ReviewReviewNote> findByReviewIdAndReviewNoteId(UUID reviewId, UUID reviewNoteId);
+    Mono<Void> deleteById(UUID id);
 }

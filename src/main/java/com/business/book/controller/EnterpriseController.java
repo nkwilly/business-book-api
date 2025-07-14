@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,32 +25,27 @@ public class EnterpriseController {
 
 
     @PostMapping
-    public ResponseEntity<Enterprise> createEnterprise(@RequestBody @Valid CreateEnterpriseRequest enterprise) {
-        Enterprise createdEnterprise = communicationAPI.createEnterprise(enterprise);
-        return ResponseEntity.ok(createdEnterprise);
+    public Mono<Enterprise> createEnterprise(@RequestBody @Valid CreateEnterpriseRequest enterprise) {
+        return communicationAPI.createEnterprise(enterprise);
     }
 
     @PutMapping
-    public ResponseEntity<Enterprise> updateEnterprise(@RequestBody Enterprise enterprise) {
-        Enterprise updatedEnterprise = communicationAPI.updateEnterprise(enterprise);
-        return ResponseEntity.ok(updatedEnterprise);
+    public Mono<Enterprise> updateEnterprise(@RequestBody Enterprise enterprise) {
+        return communicationAPI.updateEnterprise(enterprise);
     }
 
     @DeleteMapping
-    public ResponseEntity<Boolean> deleteEnterprise(@RequestBody Enterprise enterprise) {
-        boolean isDeleted = communicationAPI.deleteEnterprise(enterprise);
-        return ResponseEntity.ok(isDeleted);
+    public Mono<Void> deleteEnterprise(@RequestBody Enterprise enterprise) {
+        return communicationAPI.deleteEnterprise(enterprise);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Enterprise> getEnterpriseById(@PathVariable UUID id) {
-        Enterprise enterprise = communicationAPI.getEnterpriseById(id);
-        return ResponseEntity.ok(enterprise);
+    public Mono<Enterprise> getEnterpriseById(@PathVariable UUID id) {
+        return communicationAPI.getEnterpriseById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<Enterprise>> getAllEnterprises() {
-        List<Enterprise> enterprises = communicationAPI.getAllEnterprise();
-        return ResponseEntity.ok(enterprises);
+    public Flux<Enterprise> getAllEnterprises() {
+        return communicationAPI.getAllEnterprise();
     }
 }

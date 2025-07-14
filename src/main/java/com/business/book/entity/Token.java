@@ -22,4 +22,6 @@ public class Token {
 
     private Instant saveAt;
 
+    private Instant expireAt;
+
 }

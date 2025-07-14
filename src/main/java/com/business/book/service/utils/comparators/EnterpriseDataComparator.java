@@ -20,6 +20,10 @@ public class EnterpriseDataComparator implements Comparable<Enterprise> {
 
     @Override
     public int compareTo(Enterprise o) {
+        return 0;
+    }
+    /*
+    public int compareTo(Enterprise o) {
         EnterpriseData enterpriseData = dataRepository.findById(enterprise.getOrganizationId()).orElse(null);
         if (enterpriseData == null) {
             enterpriseData.setEnterpriseId(UUID.randomUUID());
@@ -37,4 +41,6 @@ public class EnterpriseDataComparator implements Comparable<Enterprise> {
         }
         return (int) (enterpriseData.getViewsNumbers() - oData.getViewsNumbers());
     }
+
+     */
 }

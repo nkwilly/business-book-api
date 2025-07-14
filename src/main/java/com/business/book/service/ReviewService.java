@@ -1,14 +1,14 @@
 package com.business.book.service;
 
 import com.business.book.entity.Review;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface ReviewService {
-    Review save(Review review);
-    List<Review> findAll();
-    Optional<Review> findById(UUID id);
-    void deleteById(UUID id);
+    Mono<Review> save(Review review);
+    Flux<Review> findAll();
+    Mono<Review> findById(UUID id);
+    Mono<Void> deleteById(UUID id);
 }

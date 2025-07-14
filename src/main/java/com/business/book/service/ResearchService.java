@@ -1,33 +1,34 @@
 package com.business.book.service;
 
+import com.business.book.entity.Enterprise;
 import com.business.book.entity.constants.Type;
-import com.business.book.service.payload.response.PageResponse;
+import reactor.core.publisher.Flux;
 
 
 public interface ResearchService {
-    PageResponse findAll();
+    Flux<Enterprise> findAll();
     
-    PageResponse findAll(int size);
+    Flux<Enterprise> findAll(int size);
 
-    PageResponse findByType(Type type, int fromIndex, int toIndex);
+    Flux<Enterprise> findByType(Type type, int fromIndex, int toIndex);
 
-    PageResponse findByShortName(  String name, int fromIndex, int toIndex);
+    Flux<Enterprise> findByShortName(  String name, int fromIndex, int toIndex);
 
-    PageResponse findByLongName(  String longName, int fromIndex, int toIndex);
+    Flux<Enterprise> findByLongName(  String longName, int fromIndex, int toIndex);
 
-    PageResponse findByKeyword(  String keyword, int fromIndex, int toIndex);
+    Flux<Enterprise> findByKeyword(  String keyword, int fromIndex, int toIndex);
 
-    PageResponse findByCapitalShare(  double capitalShare, int fromIndex, int toIndex);
+    Flux<Enterprise> findByCapitalShare(  double capitalShare, int fromIndex, int toIndex);
 
-    PageResponse findByYearFoundedMin(  int yearFoundedMin, int fromIndex, int toIndex);
+    Flux<Enterprise> findByYearFoundedMin(  int yearFoundedMin, int fromIndex, int toIndex);
 
-    PageResponse findByYearFoundedMax(  int yearFoundedMax, int fromIndex, int toIndex);
+    Flux<Enterprise> findByYearFoundedMax(  int yearFoundedMax, int fromIndex, int toIndex);
 
-    //PageResponse findByBusinessDomains(  String businessDomain, int fromIndex, int toIndex);
+    //Flux<Enterprise> findByBusinessDomains(  String businessDomain, int fromIndex, int toIndex);
 
-    PageResponse findByNumberOfEmployeesMin(  int numberOfEmployeesMin, int fromIndex, int toIndex);
+    Flux<Enterprise> findByNumberOfEmployeesMin(  int numberOfEmployeesMin, int fromIndex, int toIndex);
 
-    PageResponse findByNumberOfEmployeesMax(  int numberOfEmployeesMax, int fromIndex, int toIndex);
+    Flux<Enterprise> findByNumberOfEmployeesMax(  int numberOfEmployeesMax, int fromIndex, int toIndex);
 
-    PageResponse findByBusinessRegistrationNumber(  String registrationNumber, int fromIndex, int toIndex);
+    Flux<Enterprise> findByBusinessRegistrationNumber(  String registrationNumber, int fromIndex, int toIndex);
 }

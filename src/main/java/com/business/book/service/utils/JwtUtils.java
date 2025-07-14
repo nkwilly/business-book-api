@@ -122,6 +122,7 @@ public class JwtUtils {
         return false;
     }
 
+    /*
     public String generateJwtTokenFromUserId(UUID userId) throws RuntimeException {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         List<Role> roles = userRoleRepository.findByUserId(user.getId())
@@ -139,4 +140,6 @@ public class JwtUtils {
                 .signWith(key(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
+     */
 }

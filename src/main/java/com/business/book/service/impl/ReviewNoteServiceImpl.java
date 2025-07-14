@@ -5,9 +5,9 @@ import com.business.book.repository.ReviewNoteRepository;
 import com.business.book.service.ReviewNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,24 +21,24 @@ public class ReviewNoteServiceImpl implements ReviewNoteService {
     }
 
     @Override
-    public ReviewNote save(ReviewNote reviewNote) {
+    public Mono<ReviewNote> save(ReviewNote reviewNote) {
         reviewNote.setId(UUID.randomUUID());
         return reviewNoteRepository.save(reviewNote);
     }
 
     @Override
-    public List<ReviewNote> findAll() {
+    public Flux<ReviewNote> findAll() {
         return reviewNoteRepository.findAll();
     }
 
     @Override
-    public Optional<ReviewNote> findById(UUID id) {
+    public Mono<ReviewNote> findById(UUID id) {
         return reviewNoteRepository.findById(id);
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public Mono<Void> deleteById(UUID id) {
         reviewNoteRepository.deleteById(id);
+        return Mono.empty();
     }
-
 }

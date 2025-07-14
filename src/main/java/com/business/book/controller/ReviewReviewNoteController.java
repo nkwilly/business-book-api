@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -21,39 +24,32 @@ public class ReviewReviewNoteController {
     }
     
     @PostMapping
-    public ResponseEntity<ReviewReviewNote> createReviewReviewNote(@RequestBody ReviewReviewNote reviewReviewNote) {
-        ReviewReviewNote savedReviewReviewNote = reviewReviewNoteService.save(reviewReviewNote);
-        return new ResponseEntity<>(savedReviewReviewNote, HttpStatus.CREATED);
+    public Mono<ReviewReviewNote> createReviewReviewNote(@RequestBody ReviewReviewNote reviewReviewNote) {
+        return reviewReviewNoteService.save(reviewReviewNote);
     }
     
     @GetMapping
-    public ResponseEntity<List<ReviewReviewNote>> getAllReviewReviewNotes() {
-        List<ReviewReviewNote> reviewReviewNotes = reviewReviewNoteService.findAll();
-        return new ResponseEntity<>(reviewReviewNotes, HttpStatus.OK);
+    public Flux<ReviewReviewNote> getAllReviewReviewNotes() {
+        return reviewReviewNoteService.findAll();
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewReviewNote> getReviewReviewNoteById(@PathVariable UUID id) {
-        return reviewReviewNoteService.findById(id)
-                .map(reviewReviewNote -> new ResponseEntity<>(reviewReviewNote, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public Mono<ReviewReviewNote> getReviewReviewNoteById(@PathVariable UUID id) {
+        return reviewReviewNoteService.findById(id);
     }
     
     @GetMapping("/review/{reviewId}")
-    public ResponseEntity<List<ReviewReviewNote>> getReviewReviewNotesByReviewId(@PathVariable UUID reviewId) {
-        List<ReviewReviewNote> reviewReviewNotes = reviewReviewNoteService.findByReviewId(reviewId);
-        return new ResponseEntity<>(reviewReviewNotes, HttpStatus.OK);
+    public Flux<ReviewReviewNote> getReviewReviewNotesByReviewId(@PathVariable UUID reviewId) {
+        return reviewReviewNoteService.findByReviewId(reviewId);
     }
     
     @GetMapping("/review-note/{reviewNoteId}")
-    public ResponseEntity<List<ReviewReviewNote>> getReviewReviewNotesByReviewNoteId(@PathVariable UUID reviewNoteId) {
-        List<ReviewReviewNote> reviewReviewNotes = reviewReviewNoteService.findByReviewNoteId(reviewNoteId);
-        return new ResponseEntity<>(reviewReviewNotes, HttpStatus.OK);
+    public Flux<ReviewReviewNote> getReviewReviewNotesByReviewNoteId(@PathVariable UUID reviewNoteId) {
+        return reviewReviewNoteService.findByReviewNoteId(reviewNoteId);
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReviewReviewNote(@PathVariable UUID id) {
-        reviewReviewNoteService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public Mono<Void> deleteReviewReviewNote(@PathVariable UUID id) {
+        return reviewReviewNoteService.deleteById(id);
     }
 }

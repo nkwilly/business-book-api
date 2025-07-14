@@ -108,4 +108,28 @@ public class Enterprise {
     @JsonProperty("business_actor_id")
     @Column("business_actor_id")
     private UUID businessActorId;
+
+    @JsonProperty("created_at")
+    @Column("created_at")
+    private Date createdAt;
+
+    @JsonProperty("updated_at")
+    @Column("updated_at")
+    private Date updatedAt;
+
+    @JsonProperty("deleted_at")
+    @Column("deleted_at")
+    private Date deletedAt;
+
+    @JsonProperty("legal_form")
+    @Column("legal_form")
+    private int legalForm;
+
+    @JsonProperty("created_by")
+    @Column("created_by")
+    private String createdBy;
+
+    @JsonProperty("updated_by")
+    @Column("updated_by")
+    private String updatedBy;
 }

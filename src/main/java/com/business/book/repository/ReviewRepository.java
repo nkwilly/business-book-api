@@ -1,13 +1,14 @@
 package com.business.book.repository;
 
 import com.business.book.entity.Review;
-import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.cassandra.repository.ReactiveCassandraRepository;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ReviewRepository extends CassandraRepository<Review, UUID> {
-    List<Review> findByOrganizationId(UUID organizationId);
+public interface ReviewRepository extends ReactiveCassandraRepository<Review, UUID> {
+    Flux<Review> findByOrganizationId(UUID organizationId);
 }

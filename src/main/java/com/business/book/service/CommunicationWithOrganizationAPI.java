@@ -5,22 +5,21 @@ import com.business.book.entity.Token;
 import com.business.book.service.payload.request.CreateEnterpriseRequest;
 import com.business.book.service.payload.request.LoginRequest;
 import com.business.book.service.payload.request.RegisterRequest;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface CommunicationWithOrganizationAPI {
-    Token login(LoginRequest loginRequest);
+    Mono<Token> login(LoginRequest loginRequest);
 
-    Token register(RegisterRequest registerRequest);
+    Mono<Enterprise> createEnterprise(CreateEnterpriseRequest enterprise);
 
-    Enterprise createEnterprise(CreateEnterpriseRequest enterprise);
+    Mono<Enterprise> updateEnterprise(Enterprise enterprise);
 
-    Enterprise updateEnterprise(Enterprise enterprise);
+    Mono<Void> deleteEnterprise(Enterprise enterprise);
 
-    boolean deleteEnterprise(Enterprise enterprise);
+    Mono<Enterprise> getEnterpriseById(UUID id);
 
-    Enterprise getEnterpriseById(UUID id);
-
-    List<Enterprise> getAllEnterprise();
+    Flux<Enterprise> getAllEnterprise();
 }

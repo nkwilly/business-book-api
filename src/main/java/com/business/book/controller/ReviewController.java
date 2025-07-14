@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/reviews")
 public class ReviewController {
-    
+
     private final ReviewService reviewService;
     private final ReviewRepository reviewRepository;
 
@@ -25,58 +27,49 @@ public class ReviewController {
         this.reviewService = reviewService;
         this.reviewRepository = reviewRepository;
     }
-    
+
     @PostMapping
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<Review> createReview(@RequestBody CreateReviewRequest createReviewRequest) {
+    public Mono<Review> createReview(@RequestBody CreateReviewRequest createReviewRequest) {
         Review review = Review.builder()
                 .id(UUID.randomUUID())
                 .organizationId(createReviewRequest.getOrganizationId())
                 .content(createReviewRequest.getContent())
                 .build();
-        Review savedReview = reviewService.save(review);
-        return new ResponseEntity<>(savedReview, HttpStatus.CREATED);
+        return reviewService.save(review);
     }
-    
+
     @GetMapping
-    public ResponseEntity<List<Review>> getAllReviews() {
-        List<Review> reviews = reviewService.findAll();
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    public Flux<Review> getAllReviews() {
+        return reviewService.findAll();
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<Review> getReviewById(@PathVariable UUID id) {
-        return reviewService.findById(id)
-                .map(review -> new ResponseEntity<>(review, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public Mono<Review> getReviewById(@PathVariable UUID id) {
+        return reviewService.findById(id);
     }
-    
+
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<Review> updateReview(@PathVariable UUID id, @RequestBody Review review) {
+    public Mono<Review> updateReview(@PathVariable UUID id, @RequestBody Review review) {
         return reviewService.findById(id)
-                .map(existingReview -> {
+                .flatMap(existingReview -> {
                     review.setId(id);
-                    Review updatedReview = reviewService.save(review);
-                    return new ResponseEntity<>(updatedReview, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                    return reviewService.save(review);
+                });
     }
-    
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<Void> deleteReview(@PathVariable UUID id) {
+    public Mono<Void> deleteReview(@PathVariable UUID id) {
         return reviewService.findById(id)
-                .map(review -> {
-                    reviewService.deleteById(id);
-                    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .flatMap(review -> {
+                    return reviewService.deleteById(id);
+                });
     }
 
     @GetMapping("/organization/{organizationId}")
-    public ResponseEntity<List<Review>> getReviewsByOrganizationId(@PathVariable UUID organizationId) {
-        List<Review> reviews = reviewRepository.findByOrganizationId(organizationId);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    public Flux<Review> getReviewsByOrganizationId(@PathVariable UUID organizationId) {
+        return reviewRepository.findByOrganizationId(organizationId);
     }
 }

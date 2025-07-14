@@ -5,8 +5,9 @@ import com.business.book.repository.ReviewReviewNoteRepository;
 import com.business.book.service.ReviewReviewNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.UUID;
 
 @Service
@@ -20,37 +21,38 @@ public class ReviewReviewNoteServiceImpl implements ReviewReviewNoteService {
     }
     
     @Override
-    public ReviewReviewNote save(ReviewReviewNote reviewReviewNote) {
+    public Mono<ReviewReviewNote> save(ReviewReviewNote reviewReviewNote) {
         return reviewReviewNoteRepository.save(reviewReviewNote);
     }
     
     @Override
-    public List<ReviewReviewNote> findAll() {
+    public Flux<ReviewReviewNote> findAll() {
         return reviewReviewNoteRepository.findAll();
     }
     
     @Override
-    public Optional<ReviewReviewNote> findById(UUID id) {
+    public Mono<ReviewReviewNote> findById(UUID id) {
         return reviewReviewNoteRepository.findById(id);
     }
     
     @Override
-    public List<ReviewReviewNote> findByReviewId(UUID reviewId) {
+    public Flux<ReviewReviewNote> findByReviewId(UUID reviewId) {
         return reviewReviewNoteRepository.findByReviewId(reviewId);
     }
     
     @Override
-    public List<ReviewReviewNote> findByReviewNoteId(UUID reviewNoteId) {
+    public Flux<ReviewReviewNote> findByReviewNoteId(UUID reviewNoteId) {
         return reviewReviewNoteRepository.findByReviewNoteId(reviewNoteId);
     }
     
     @Override
-    public Optional<ReviewReviewNote> findByReviewIdAndReviewNoteId(UUID reviewId, UUID reviewNoteId) {
+    public Mono<ReviewReviewNote> findByReviewIdAndReviewNoteId(UUID reviewId, UUID reviewNoteId) {
         return reviewReviewNoteRepository.findByReviewIdAndReviewNoteId(reviewId, reviewNoteId);
     }
     
     @Override
-    public void deleteById(UUID id) {
+    public Mono<Void> deleteById(UUID id) {
         reviewReviewNoteRepository.deleteById(id);
+        return Mono.empty();
     }
 }

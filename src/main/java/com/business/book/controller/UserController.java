@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,20 +28,18 @@ public class UserController {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /*
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return ResponseEntity.ok(users);
+    public Flux<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     // Get user by ID
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or #id == authentication.principal.id")
     public ResponseEntity<User> getUserById(@PathVariable UUID id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-        return ResponseEntity.ok(user);
+        return userRepository.findById(id);
     }
 
     @PostMapping
@@ -102,10 +101,6 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-
-        userRepository.delete(user);
-        log.info("Deleted user with ID: {}", id);
-        return ResponseEntity.ok().body("User deleted successfully");
     }
 
     // Get user by token
@@ -148,4 +143,6 @@ public class UserController {
             this.password = user.getPassword();
         }
     }
+
+     */
 }

@@ -1,18 +1,21 @@
 package com.business.book.repository;
 
 import com.business.book.entity.Token;
-import org.springframework.data.cassandra.repository.CassandraRepository;
+import org.springframework.data.cassandra.repository.ReactiveCassandraRepository;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.UUID;
 
-public interface TokenRepository extends CassandraRepository<Token, UUID> {
+public interface TokenRepository extends ReactiveCassandraRepository<Token, UUID> {
 
-    default Token customSave(Token token) {
-        Optional<Token> existToken = findById(token.getId());
-        existToken.ifPresent(this::delete);
+    default Mono<Token> customSave(Token token) {
+        Mono<Token> existToken = findById(token.getId());
+        if (existToken.blockOptional().isPresent()) {
+            this.deleteById(token.getId());
+        }
         return save(token);
     }
 
-    Optional<Token> findTopByOrderBySaveAtDesc();
+    Mono<Token> findTopByOrderBySaveAtDesc();
 }

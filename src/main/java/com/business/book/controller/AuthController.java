@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.List;
@@ -82,35 +83,48 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest registerRequest) {
-        if (userRepository.existsByUsername(registerRequest.getUsername()))
-            return ResponseEntity.badRequest().body("Username already exists");
-        if (userRepository.existsByEmail(registerRequest.getEmail()))
-            return ResponseEntity.badRequest().body("Email already exists");
-        if (userRepository.existsByTel(registerRequest.getTel()))
-            return ResponseEntity.badRequest().body("Phone number already exists");
+    public Mono<ResponseEntity<?>> register(@RequestBody @Valid RegisterRequest registerRequest) {
+        return userRepository.existsByUsername(registerRequest.getUsername())
+                .flatMap(exists -> {
+                    if (Boolean.TRUE.equals(exists)) {
+                        return Mono.just(ResponseEntity.badRequest().body("Username already exists"));
+                    }
+                    return userRepository.existsByEmail(registerRequest.getEmail());
+                })
+                .flatMap(exists -> {
+                    if (Boolean.TRUE.equals(exists)) {
+                        return Mono.just(ResponseEntity.badRequest().body("Email already exists"));
+                    }
+                    return userRepository.existsByTel(registerRequest.getTel());
+                })
+                .flatMap(exists -> {
+                    if (Boolean.TRUE.equals(exists)) {
+                        return Mono.just(ResponseEntity.badRequest().body("Phone number already exists"));
+                    }
 
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        user.setUsername(registerRequest.getUsername());
-        user.setPassword(encoder.encode(registerRequest.getPassword()));
-        user.setEmail(registerRequest.getEmail());
-        user.setTel(registerRequest.getTel());
-        user.setCreatedAt(Instant.now());
-        user.setUpdatedAt(Instant.now());
-        user.setCreatedBy(user.getId());
-        user.setLastModifiedBy(user.getId());
+                    User user = new User();
+                    user.setId(UUID.randomUUID());
+                    user.setUsername(registerRequest.getUsername());
+                    user.setPassword(encoder.encode(registerRequest.getPassword()));
+                    user.setEmail(registerRequest.getEmail());
+                    user.setTel(registerRequest.getTel());
+                    user.setCreatedAt(Instant.now());
+                    user.setUpdatedAt(Instant.now());
+                    user.setCreatedBy(user.getId());
+                    user.setLastModifiedBy(user.getId());
 
-        Role role = roleRepository.findByName(Roles.ROLE_CUSTOMER.name());
-        UserRole userRole = new UserRole();
-        userRole.setId(UUID.randomUUID());
-        userRole.setUserId(user.getId());
-        userRole.setRoleId(role.getId());
+                    return roleRepository.findByName(Roles.ROLE_CUSTOMER.name())
+                            .flatMap(role -> {
+                                UserRole userRole = new UserRole();
+                                userRole.setId(UUID.randomUUID());
+                                userRole.setUserId(user.getId());
+                                userRole.setRoleId(role.getId());
 
-        userRoleRepository.save(userRole);
-
-        User registerUser = userRepository.save(user);
-        log.info("registered user: {}", registerUser);
-        return ResponseEntity.ok().body("User registered successfully");
+                                return userRoleRepository.save(userRole)
+                                        .then(userRepository.save(user))
+                                        .doOnNext(savedUser -> log.info("registered user: {}", savedUser))
+                                        .map(savedUser -> ResponseEntity.ok().body("User registered successfully"));
+                            });
+                });
     }
 }

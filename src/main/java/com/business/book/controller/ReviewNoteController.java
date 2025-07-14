@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,48 +27,40 @@ public class ReviewNoteController {
     
     @PostMapping
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<ReviewNote> createReviewNote(@RequestBody CreateReviewNoteRequest createReviewNoteRequest) {
+    public Mono<ReviewNote> createReviewNote(@RequestBody CreateReviewNoteRequest createReviewNoteRequest) {
         ReviewNote reviewNote = ReviewNote.builder()
                 .organizationId(createReviewNoteRequest.getOrganizationId())
                 .note(createReviewNoteRequest.getNote())
                 .build();
-        ReviewNote savedReviewNote = reviewNoteService.save(reviewNote);
-        return new ResponseEntity<>(savedReviewNote, HttpStatus.CREATED);
+        return reviewNoteService.save(reviewNote);
     }
     
     @GetMapping
-    public ResponseEntity<List<ReviewNote>> getAllReviewNotes() {
-        List<ReviewNote> reviewNotes = reviewNoteService.findAll();
-        return new ResponseEntity<>(reviewNotes, HttpStatus.OK);
+    public Flux<ReviewNote> getAllReviewNotes() {
+       return reviewNoteService.findAll();
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewNote> getReviewNoteById(@PathVariable UUID id) {
-        return reviewNoteService.findById(id)
-                .map(reviewNote -> new ResponseEntity<>(reviewNote, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public Mono<ReviewNote> getReviewNoteById(@PathVariable UUID id) {
+        return reviewNoteService.findById(id);
     }
     
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<ReviewNote> updateReviewNote(@PathVariable UUID id, @RequestBody ReviewNote reviewNote) {
+    public Mono<ReviewNote> updateReviewNote(@PathVariable UUID id, @RequestBody ReviewNote reviewNote) {
         return reviewNoteService.findById(id)
-                .map(existingReviewNote -> {
+                .flatMap(existingReviewNote -> {
                     reviewNote.setId(id);
-                    ReviewNote updatedReviewNote = reviewNoteService.save(reviewNote);
-                    return new ResponseEntity<>(updatedReviewNote, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                    return reviewNoteService.save(reviewNote);
+                });
     }
     
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'SUPERADMIN')")
-    public ResponseEntity<Void> deleteReviewNote(@PathVariable UUID id) {
+    public Mono<Void> deleteReviewNote(@PathVariable UUID id) {
         return reviewNoteService.findById(id)
-                .map(reviewNote -> {
-                    reviewNoteService.deleteById(id);
-                    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .flatMap(reviewNote -> {
+                    return reviewNoteService.deleteById(id);
+                });
     }
 }

@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -21,39 +24,32 @@ public class ReviewVisitorController {
     }
     
     @PostMapping
-    public ResponseEntity<ReviewVisitor> createReviewVisitor(@RequestBody ReviewVisitor reviewVisitor) {
-        ReviewVisitor savedReviewVisitor = reviewVisitorService.save(reviewVisitor);
-        return new ResponseEntity<>(savedReviewVisitor, HttpStatus.CREATED);
+    public Mono<ReviewVisitor> createReviewVisitor(@RequestBody ReviewVisitor reviewVisitor) {
+        return reviewVisitorService.save(reviewVisitor);
     }
     
     @GetMapping
-    public ResponseEntity<List<ReviewVisitor>> getAllReviewVisitors() {
-        List<ReviewVisitor> reviewVisitors = reviewVisitorService.findAll();
-        return new ResponseEntity<>(reviewVisitors, HttpStatus.OK);
+    public Flux<ReviewVisitor> getAllReviewVisitors() {
+        return reviewVisitorService.findAll();
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<ReviewVisitor> getReviewVisitorById(@PathVariable UUID id) {
-        return reviewVisitorService.findById(id)
-                .map(reviewVisitor -> new ResponseEntity<>(reviewVisitor, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public Mono<ReviewVisitor> getReviewVisitorById(@PathVariable UUID id) {
+        return reviewVisitorService.findById(id);
     }
     
     @GetMapping("/review/{reviewId}")
-    public ResponseEntity<List<ReviewVisitor>> getReviewVisitorsByReviewId(@PathVariable UUID reviewId) {
-        List<ReviewVisitor> reviewVisitors = reviewVisitorService.findByReviewId(reviewId);
-        return new ResponseEntity<>(reviewVisitors, HttpStatus.OK);
+    public Flux<ReviewVisitor> getReviewVisitorsByReviewId(@PathVariable UUID reviewId) {
+        return reviewVisitorService.findByReviewId(reviewId);
     }
     
     @GetMapping("/visitor/{visitorId}")
-    public ResponseEntity<List<ReviewVisitor>> getReviewVisitorsByVisitorId(@PathVariable UUID visitorId) {
-        List<ReviewVisitor> reviewVisitors = reviewVisitorService.findByVisitorId(visitorId);
-        return new ResponseEntity<>(reviewVisitors, HttpStatus.OK);
+    public Flux<ReviewVisitor> getReviewVisitorsByVisitorId(@PathVariable UUID visitorId) {
+        return reviewVisitorService.findByVisitorId(visitorId);
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReviewVisitor(@PathVariable UUID id) {
-        reviewVisitorService.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public Mono<Void> deleteReviewVisitor(@PathVariable UUID id) {
+        return reviewVisitorService.deleteById(id);
     }
 }
