@@ -1,9 +1,9 @@
 package com.business.book;
 
-import com.business.book.entity.User;
-import com.business.book.repository.RoleRepository;
-import com.business.book.repository.UserRepository;
-import com.business.book.repository.UserRoleRepository;
+import com.business.book.infrastructure.entity.User;
+import com.business.book.infrastructure.repository.RoleRepository;
+import com.business.book.infrastructure.repository.UserRepository;
+import com.business.book.infrastructure.repository.UserRoleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
