@@ -10,5 +10,8 @@ COPY target/BusinessBook-0.0.1-SNAPSHOT.jar app.jar
 # Expose le port (Railway injecte la variable d'environnement $PORT)
 EXPOSE 8080
 
-# Commande de démarrage (utilise le port Railway si défini, sinon 8080)
-ENTRYPOINT exec java -jar app.jar --server.port=${PORT:-8080}
+# Attend 2 minutes (120 secondes)
+sleep 120
+
+# Exécute ton application Java après l'attente
+exec java -jar app.jar --server.port=${PORT:-8080}
