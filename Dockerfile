@@ -10,4 +10,4 @@ COPY target/BusinessBook-0.0.1-SNAPSHOT.jar app.jar
 # Expose le port (Railway injecte la variable d'environnement $PORT)
 EXPOSE 8080
 
-exec java -jar app.jar --server.port=${PORT:-8080}
+CMD ["java", "-jar", "app.jar", "--server.port=${PORT:-8080}"]
